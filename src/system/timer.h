@@ -32,6 +32,14 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifdef LORAWAN_USE_FREERTOS_TIMERS
+
+    #include "FreeRTOS.h"
+    #include "timers.h"
+    typedef TimerHandle_t TimerEvent_t;
+
+#else
+
 /*!
  * \brief Timer object description
  */
@@ -45,6 +53,8 @@ typedef struct TimerEvent_s
     void *Context;                       //! User defined data object pointer to pass back
     struct TimerEvent_s *Next;           //! Pointer to the next Timer object.
 }TimerEvent_t;
+
+#endif
 
 /*!
  * \brief Timer time variable definition

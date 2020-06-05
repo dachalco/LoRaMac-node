@@ -246,7 +246,7 @@ typedef union uLoRaMacHeader
         /*!
          * RFU
          */
-        uint8_t RFU             : 3;
+        uint8_t reserved             : 3;
         /*!
          * Message type
          */

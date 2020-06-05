@@ -458,7 +458,7 @@ typedef union uPingSlotInfo
         /*!
          * RFU
          */
-        uint8_t RFU             : 5;
+        uint8_t reserved             : 5;
     }Fields;
 }PingSlotInfo_t;
 
