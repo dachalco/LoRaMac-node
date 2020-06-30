@@ -41,7 +41,7 @@ extern "C"
 /*!
  * \brief Timer object description
  */
-struct TimerEvent_s
+typedef struct TimerEvent_s
 {
     uint32_t Timestamp;                  //! Current timer value
     uint32_t ReloadValue;                //! Timer delay value

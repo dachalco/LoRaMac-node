@@ -319,6 +319,8 @@ uint32_t RadioGetWakeupTime( void );
  */
 void RadioIrqProcess( void );
 
+void RadioSetEventNotify( void ( * notify ) ( bool ) );
+
 /*!
  * \brief Sets the radio in reception mode with Max LNA gain for the given time
  * \param [IN] timeout Reception timeout [ms]
@@ -364,6 +366,7 @@ const struct Radio_s Radio =
     RadioSetPublicNetwork,
     RadioGetWakeupTime,
     RadioIrqProcess,
+    RadioSetEventNotify,
     // Available on SX126x only
     RadioRxBoosted,
     RadioSetRxDutyCycle
@@ -1192,19 +1195,45 @@ void RadioOnTxTimeoutIrq( void* context )
     {
         RadioEvents->TxTimeout( );
     }
+
+    if( ( RadioEvents != NULL ) && ( RadioEvents->notify != NULL ) )
+    {
+        RadioEvents->notify( false );
+    }
 }
 
 void RadioOnRxTimeoutIrq( void* context )
 {
-    if( ( RadioEvents != NULL ) && ( RadioEvents->RxTimeout != NULL ) )
+    if( ( RadioEvents != NULL ) )
     {
-        RadioEvents->RxTimeout( );
+        if( RadioEvents->RxTimeout != NULL )
+        {
+            RadioEvents->RxTimeout( );
+        }
+
+        if( RadioEvents->notify != NULL )
+        {
+            RadioEvents->notify( false );
+        }
     }
+}
+
+void RadioSetEventNotify( void ( * notify ) ( bool ) )
+{
+    if( RadioEvents != NULL )
+    {
+        RadioEvents->notify = notify;
+    }
+
 }
 
 void RadioOnDioIrq( void* context )
 {
     IrqFired = true;
+    if( ( RadioEvents != NULL ) && ( RadioEvents->notify != NULL ) )
+    {
+        RadioEvents->notify( true );
+    }
 }
 
 void RadioIrqProcess( void )
