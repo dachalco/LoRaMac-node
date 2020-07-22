@@ -108,10 +108,10 @@ typedef struct
     void    ( *WifiDone )( void );
 
     /*!
-     * \brief Notify of a radio event available.
+     * \brief Notify of a radio event from ISR.
      */
 
-    void    ( *notify )( bool fromISR );
+    void    ( *notify )( void );
 }RadioEvents_t;
 
 /*!
@@ -387,7 +387,7 @@ struct Radio_s
      /*!
      * \brief Set radio notification.
      */
-    void ( *SetEventNotify )( void ( * notify ) ( bool ) );
+    void ( *SetEventNotify )( void ( * notify ) ( void ) );
 
     /*
      * The next functions are available only on SX126x radios.

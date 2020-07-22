@@ -319,7 +319,7 @@ uint32_t RadioGetWakeupTime( void );
  */
 void RadioIrqProcess( void );
 
-void RadioSetEventNotify( void ( * notify ) ( bool ) );
+void RadioSetEventNotify( void ( * notify ) ( void ) );
 
 /*!
  * \brief Sets the radio in reception mode with Max LNA gain for the given time
@@ -1195,30 +1195,17 @@ void RadioOnTxTimeoutIrq( void* context )
     {
         RadioEvents->TxTimeout( );
     }
-
-    if( ( RadioEvents != NULL ) && ( RadioEvents->notify != NULL ) )
-    {
-        RadioEvents->notify( false );
-    }
 }
 
 void RadioOnRxTimeoutIrq( void* context )
 {
-    if( ( RadioEvents != NULL ) )
+    if( ( RadioEvents != NULL ) && ( RadioEvents->RxTimeout != NULL ) )
     {
-        if( RadioEvents->RxTimeout != NULL )
-        {
-            RadioEvents->RxTimeout( );
-        }
-
-        if( RadioEvents->notify != NULL )
-        {
-            RadioEvents->notify( false );
-        }
+        RadioEvents->RxTimeout();
     }
 }
 
-void RadioSetEventNotify( void ( * notify ) ( bool ) )
+void RadioSetEventNotify( void ( * notify ) ( void ) )
 {
     if( RadioEvents != NULL )
     {
@@ -1230,9 +1217,10 @@ void RadioSetEventNotify( void ( * notify ) ( bool ) )
 void RadioOnDioIrq( void* context )
 {
     IrqFired = true;
+
     if( ( RadioEvents != NULL ) && ( RadioEvents->notify != NULL ) )
     {
-        RadioEvents->notify( true );
+        RadioEvents->notify();
     }
 }
 
